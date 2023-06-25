@@ -1,4 +1,5 @@
-export const tweetsData = [   
+ 
+ export let tweetsData = [   
     {
         handle: `@TrollBot66756542 💎`,
         profilePic: `images/troll.jpg`,
@@ -57,6 +58,4 @@ export const tweetsData = [
     },     
 ]
 
-function sum(a,b) {
-    return a + b
-}
+// const tweets

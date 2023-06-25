@@ -5,10 +5,15 @@
 //not operator !
 
 import {tweetsData} from './data.js'
+import { v4 as uuidv4 } from 'https://jspm.dev/uuid';
+// console.log(uuidv4())
 
+const tweetsFromLocalStorage = JSON.parse(localStorage.getItem('tweetsData'))
+console.log(tweetsFromLocalStorage)
 
-const tweetInput = document.getElementById("tweet-input")
-
+if(tweetsFromLocalStorage) {
+    render()
+}
 
 document.addEventListener('click', (e) => {
     if(e.target.dataset.like) {
@@ -57,48 +62,34 @@ function handleRetweetsClick(tweetId) {
 }
 
 function handleReplyClick(tweetId) {
-    const targetTweetObj = tweetsData.filter((object) => {
-        return object.uuid === tweetId
-    })[0]
-    // console.log(targetTweetObj)
-    document.getElementById(`replies-${tweetId}`).classList.toggle('hidden')
-    // if (targetTweetObj.replies.length > 0) {
-    //     //show the replies div
-    // } else {
-    //     //keep hiding the replies div
-    // }
+    document.getElementById(`replies-${tweetId}`).classList.toggle('hidden')  
 }
 
 function handleTweetBtnClick() {
-    console.log(tweetInput.value)
+    const tweetInput = document.getElementById("tweet-input")
+    let data
+    if(tweetInput.value) {
+        tweetsData.unshift(
+            {
+                handle: `@bimba`,
+                profilePic: `images/scrimbalogo.png`,
+                likes: 0,
+                retweets: 0,
+                tweetText: tweetInput.value,
+                replies: [],
+                isLiked: false,
+                isRetweeted: false,
+                uuid: uuidv4()
+            }
+        )
+        render()
+        
+        tweetInput.value = ''
+    }
 }
 
 function getFeedHtml() {
     let feedHtml = ''
-    // for(let eachObject of tweetsData) {
-    //      feedHtml += `
-    //         <div class="tweet">
-    //             <div class="tweet-inner">
-    //                 <img src="${eachObject.profilePic}" class="profile-pic">
-    //                 <div>
-    //                     <p class="handle">${eachObject.handle}</p>
-    //                     <p class="tweet-text">${eachObject.tweetText}</p>
-    //                     <div class="tweet-details">
-    //                         <span class="tweet-detail">
-    //                             ${eachObject.replies.length} 
-    //                         </span>
-    //                         <span class="tweet-detail">
-    //                             ${eachObject.likes}
-    //                         </span>
-    //                         <span class="tweet-detail">
-    //                             ${eachObject.retweets}
-    //                         </span>
-    //                     </div>   
-    //                 </div>            
-    //             </div>
-    //         </div>         
-    //     `
-    // }
     
     tweetsData.forEach((eachObject) => {
         let heartClass = ''
@@ -106,9 +97,10 @@ function getFeedHtml() {
 
         if (eachObject.isLiked) {
             heartClass = 'liked'
-        } else if (eachObject.isRetweeted) {
-            retweetClass = 'retweeted'
-        }
+        } 
+        // if (eachObject.isRetweeted) {
+        //     retweetClass = 'retweeted'
+        // }
         let repliesHtml = ''
         let repliesClass = ''
         if(eachObject.replies.length > 0) {
@@ -160,27 +152,6 @@ function getFeedHtml() {
     // console.log(feedHtml)
     return feedHtml
 }
-// getFeedHtml()
-{/* <div class="tweet">
-    <div class="tweet-inner">
-        <img src="URL OF PROFILE PIC" class="profile-pic">
-        <div>
-            <p class="handle">TWEET HANDLE</p>
-            <p class="tweet-text">TWEET TEXT</p>
-            <div class="tweet-details">
-                <span class="tweet-detail">
-                    NUMBER OF REPLIES
-                </span>
-                <span class="tweet-detail">
-                    NUMBER OF LIKES
-                </span>
-                <span class="tweet-detail">
-                    NUMBER OF RETWEETS
-                </span>
-            </div>   
-        </div>            
-    </div>
-</div> */}
 
 function render() {
     document.getElementById('feed').innerHTML = getFeedHtml()
